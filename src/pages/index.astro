@@ -1,5 +1,7 @@
 ---
-const title = "BrawlStats";
+import MainNav from "../components/MainNav.astro";
+
+const title = "Brawlex";
 ---
 
 <!doctype html>
@@ -26,17 +28,29 @@ const title = "BrawlStats";
       body {
         margin: 0;
         min-height: 100vh;
-        display: grid;
-        place-items: center;
         font-family: "Trebuchet MS", "Segoe UI", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(circle at top, rgba(245, 158, 11, 0.24), transparent 30%),
+          radial-gradient(
+            circle at top,
+            rgba(245, 158, 11, 0.24),
+            transparent 30%
+          ),
           linear-gradient(160deg, var(--bg-start), var(--bg-end));
       }
 
+      .page-shell {
+        min-height: 100vh;
+        padding: 1rem;
+      }
+
+      header {
+        padding-top: 0.5rem;
+      }
+
       main {
-        width: min(680px, calc(100vw - 2rem));
+        width: min(1120px, calc(100vw - 2rem));
+        margin: 2.5rem auto 0;
         padding: 3rem;
         border: 1px solid rgba(148, 163, 184, 0.2);
         border-radius: 24px;
@@ -60,16 +74,30 @@ const title = "BrawlStats";
       strong {
         color: var(--accent);
       }
+
+      @media (max-width: 640px) {
+        main {
+          margin-top: 1.5rem;
+          padding: 2rem 1.25rem;
+        }
+      }
     </style>
   </head>
   <body>
-    <main>
-      <p>Initial smoke test</p>
-      <h1>Hello World</h1>
-      <p>
-        This is the first <strong>BrawlStats</strong> page. If this renders at <code>/</code>,
-        the Astro setup is working correctly.
-      </p>
-    </main>
+    <div class="page-shell">
+      <header>
+        <MainNav />
+      </header>
+
+      <main>
+        <p>Initial smoke test</p>
+        <h1>Hello World</h1>
+        <p>
+          This is the first <strong>Brawlex</strong> page. If this renders with the
+          new navigation at <code>/</code>, the basic site shell is working
+          correctly.
+        </p>
+      </main>
+    </div>
   </body>
 </html>

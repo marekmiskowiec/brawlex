@@ -1,0 +1,105 @@
+---
+const links = [
+  { href: "/brawlers", label: "Brawlers" },
+  { href: "/meta-tracker", label: "Meta Tracker" },
+  { href: "/leaderboards", label: "Leaderboards" },
+  { href: "/tier-list-maker", label: "Tier List Maker" }
+];
+---
+
+<nav class="nav-shell">
+  <a class="brand" href="/" aria-label="Brawlex home">
+    <span class="brand-mark">B</span>
+    <span class="brand-text">Brawlex</span>
+  </a>
+
+  <div class="nav-links">
+    {links.map((link) => (
+      <a href={link.href}>{link.label}</a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .nav-shell {
+    width: min(1120px, calc(100vw - 2rem));
+    margin: 0 auto;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 22px;
+    background: rgba(15, 23, 42, 0.82);
+    box-shadow: 0 18px 48px rgba(2, 6, 23, 0.3);
+    backdrop-filter: blur(16px);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #f8fafc;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .brand-mark {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #0f172a;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  }
+
+  .brand-text {
+    font-size: 1.05rem;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .nav-links a {
+    padding: 0.72rem 1rem;
+    border-radius: 999px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .nav-links a:hover {
+    background: rgba(51, 65, 85, 0.72);
+    color: #f8fafc;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 820px) {
+    .nav-shell {
+      padding: 1rem;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .brand {
+      justify-content: center;
+    }
+
+    .nav-links {
+      justify-content: center;
+    }
+  }
+</style>
