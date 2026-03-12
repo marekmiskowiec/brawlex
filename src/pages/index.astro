@@ -1,0 +1,75 @@
+---
+const title = "BrawlStats";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg-start: #0f172a;
+        --bg-end: #1e293b;
+        --card: rgba(15, 23, 42, 0.72);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #f59e0b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top, rgba(245, 158, 11, 0.24), transparent 30%),
+          linear-gradient(160deg, var(--bg-start), var(--bg-end));
+      }
+
+      main {
+        width: min(680px, calc(100vw - 2rem));
+        padding: 3rem;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 24px;
+        background: var(--card);
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.45);
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0 0 1rem;
+        font-size: clamp(2.5rem, 7vw, 4.5rem);
+        line-height: 0.95;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.1rem;
+      }
+
+      strong {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p>Initial smoke test</p>
+      <h1>Hello World</h1>
+      <p>
+        This is the first <strong>BrawlStats</strong> page. If this renders at <code>/</code>,
+        the Astro setup is working correctly.
+      </p>
+    </main>
+  </body>
+</html>
