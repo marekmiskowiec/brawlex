@@ -1,0 +1,186 @@
+---
+import MainNav from "../components/MainNav.astro";
+
+const title = "Brawlex | Brawlers";
+const groups = [
+  { rarity: "Starting Brawler", brawler: "Shelly", tone: "starting" },
+  { rarity: "Rare", brawler: "Colt", tone: "rare" },
+  { rarity: "Super Rare", brawler: "Rico", tone: "super-rare" },
+  { rarity: "Epic", brawler: "Bo", tone: "epic" },
+  { rarity: "Mythic", brawler: "Mortis", tone: "mythic" },
+  { rarity: "Legendary", brawler: "Spice", tone: "legendary" },
+  { rarity: "Ultra Legendary", brawler: "Sirius", tone: "ultra" }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg-start: #020617;
+        --bg-end: #111827;
+        --panel: rgba(15, 23, 42, 0.76);
+        --panel-strong: rgba(15, 23, 42, 0.92);
+        --border: rgba(148, 163, 184, 0.18);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top, rgba(245, 158, 11, 0.18), transparent 25%),
+          linear-gradient(180deg, var(--bg-start), var(--bg-end));
+      }
+
+      .page-shell {
+        min-height: 100vh;
+        padding: 1rem;
+      }
+
+      header {
+        padding-top: 0.5rem;
+      }
+
+      main {
+        width: min(1120px, calc(100vw - 2rem));
+        margin: 2rem auto 0;
+      }
+
+      .hero {
+        padding: 2.5rem;
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        background:
+          linear-gradient(135deg, rgba(245, 158, 11, 0.14), transparent 40%),
+          var(--panel-strong);
+        box-shadow: 0 24px 80px rgba(2, 6, 23, 0.42);
+      }
+
+      .eyebrow {
+        margin: 0 0 0.75rem;
+        color: #f59e0b;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.82rem;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.4rem, 5vw, 4.4rem);
+        line-height: 0.95;
+      }
+
+      .hero p {
+        max-width: 46rem;
+        margin: 1rem 0 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .card {
+        padding: 1.25rem;
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        background: var(--panel);
+      }
+
+      .card p {
+        margin: 0;
+      }
+
+      .label {
+        color: var(--muted);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .name {
+        margin-top: 0.8rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .starting {
+        background: linear-gradient(180deg, rgba(59, 130, 246, 0.16), rgba(15, 23, 42, 0.76));
+      }
+
+      .rare {
+        background: linear-gradient(180deg, rgba(34, 197, 94, 0.16), rgba(15, 23, 42, 0.76));
+      }
+
+      .super-rare {
+        background: linear-gradient(180deg, rgba(6, 182, 212, 0.18), rgba(15, 23, 42, 0.76));
+      }
+
+      .epic {
+        background: linear-gradient(180deg, rgba(168, 85, 247, 0.18), rgba(15, 23, 42, 0.76));
+      }
+
+      .mythic {
+        background: linear-gradient(180deg, rgba(236, 72, 153, 0.18), rgba(15, 23, 42, 0.76));
+      }
+
+      .legendary {
+        background: linear-gradient(180deg, rgba(245, 158, 11, 0.22), rgba(15, 23, 42, 0.76));
+      }
+
+      .ultra {
+        background: linear-gradient(180deg, rgba(239, 68, 68, 0.24), rgba(15, 23, 42, 0.76));
+      }
+
+      @media (max-width: 640px) {
+        .hero {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header>
+        <MainNav currentPath="/brawlers" />
+      </header>
+
+      <main>
+        <section class="hero">
+          <p class="eyebrow">Brawler Directory</p>
+          <h1>Brawlers by rarity</h1>
+          <p>
+            Basic category view for the first content page. Each card maps one requested rarity
+            to one featured brawler so the route is ready for real data later.
+          </p>
+        </section>
+
+        <section class="grid" aria-label="Brawler rarity categories">
+          {groups.map((group) => (
+            <article class:list={["card", group.tone]}>
+              <p class="label">{group.rarity}</p>
+              <p class="name">{group.brawler}</p>
+            </article>
+          ))}
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
