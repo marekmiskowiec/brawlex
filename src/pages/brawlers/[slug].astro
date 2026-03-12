@@ -1,0 +1,319 @@
+---
+import MainNav from "../../components/MainNav.astro";
+import { brawlerGroups, brawlerOrder, getBrawlerMeta, slugifyBrawler } from "../../data/brawlers";
+
+const brawlerAssetModules = import.meta.glob("../../assets/brawlers/*.png", {
+  eager: true,
+  import: "default"
+});
+
+type AssetModule = {
+  src: string;
+};
+
+const toneAccents = {
+  starting: { accent: "#9fd6ff", accentStrong: "#6ec4ff" },
+  rare: { accent: "#6dff58", accentStrong: "#4eea35" },
+  "super-rare": { accent: "#5eb7ff", accentStrong: "#3ba5ff" },
+  epic: { accent: "#df53ff", accentStrong: "#ce33f5" },
+  mythic: { accent: "#ff5d7d", accentStrong: "#ff3f66" },
+  legendary: { accent: "#ffcf46", accentStrong: "#ffc21f" },
+  ultra: { accent: "#ff8d43", accentStrong: "#ff6d1c" }
+};
+
+const orderedAssets = Object.entries(brawlerAssetModules)
+  .sort(([left], [right]) => {
+    const leftId = Number(left.match(/(\d+)\.png$/)?.[1] ?? 0);
+    const rightId = Number(right.match(/(\d+)\.png$/)?.[1] ?? 0);
+    return leftId - rightId;
+  })
+  .map(([, asset]) => (asset as AssetModule).src);
+
+const portraitByName = new Map(brawlerOrder.map((name, index) => [name, orderedAssets[index] ?? null]));
+
+function buildFallbackStats(name: string, rarity: string) {
+  return [
+    { label: "Health", value: "TBD", note: `${name} stats will be synced from the source page.` },
+    { label: "Speed", value: "TBD", note: `${rarity} movement data pending import.` },
+    { label: "Damage", value: "TBD", note: "Primary attack values coming soon." },
+    { label: "Reload", value: "TBD", note: "Reload timing placeholder." }
+  ];
+}
+
+function buildFallbackAbilities(kind: "Star Power" | "Gadget", name: string) {
+  return [
+    {
+      name: `${kind} 1`,
+      description: `${name} ${kind.toLowerCase()} details will be added from the source page.`,
+      usage: `Placeholder card for ${name} until the exact ${kind.toLowerCase()} data is imported.`
+    },
+    {
+      name: `${kind} 2`,
+      description: `Second ${kind.toLowerCase()} slot reserved for ${name}.`,
+      usage: `The layout is ready for the full ${kind.toLowerCase()} breakdown.`
+    }
+  ];
+}
+
+export function getStaticPaths() {
+  return brawlerGroups.flatMap((group) =>
+    group.brawlers.map((name) => ({
+      params: { slug: slugifyBrawler(name) }
+    }))
+  );
+}
+
+const { slug } = Astro.params;
+const match = brawlerOrder.find((name) => slugifyBrawler(name) === slug);
+
+if (!match) {
+  throw new Error(`Unknown brawler slug: ${slug}`);
+}
+
+const meta = getBrawlerMeta(match);
+
+if (!meta) {
+  throw new Error(`Missing brawler metadata for: ${match}`);
+}
+
+const detail = meta.detail ?? {
+  className: "Brawler",
+  offense: 3,
+  defense: 3,
+  utility: 3,
+  subtitle: `${meta.name} is listed under ${meta.rarity}. This page uses the Shelly layout and is ready for exact source data import.`,
+  stats: buildFallbackStats(meta.name, meta.rarity),
+  starPowers: buildFallbackAbilities("Star Power", meta.name),
+  gadgets: buildFallbackAbilities("Gadget", meta.name)
+};
+
+const portrait = portraitByName.get(meta.name);
+const accent = toneAccents[meta.tone];
+const title = `Brawlex | ${meta.name}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --panel: #10141c;
+        --panel-soft: #171d27;
+        --line: rgba(255, 255, 255, 0.07);
+        --text: #ecf2fb;
+        --muted: #8b96a7;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top, rgba(59, 130, 246, 0.08), transparent 28%),
+          linear-gradient(180deg, #090b11, #0c1017 55%, #090b11);
+      }
+
+      .page-shell { min-height: 100vh; padding: 1rem 1rem 2.5rem; }
+      header { padding-top: 0.5rem; }
+      main { width: min(1180px, calc(100vw - 2rem)); margin: 1.25rem auto 0; }
+      .hero {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 1.5rem;
+        padding: 1.5rem;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+      }
+      .portrait-card {
+        display: grid;
+        place-items: center;
+        min-height: 180px;
+        border-radius: 20px;
+        overflow: hidden;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 28%, transparent), rgba(15, 23, 42, 0.9));
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      }
+      .portrait-card img { width: 100%; display: block; aspect-ratio: 1 / 1; object-fit: cover; }
+      .fallback-initial { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.08em; }
+      .hero-copy { display: flex; flex-direction: column; justify-content: center; }
+      .eyebrow {
+        margin: 0;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0.45rem 0 0;
+        font-size: clamp(2.6rem, 5vw, 4.4rem);
+        line-height: 0.95;
+        letter-spacing: -0.05em;
+      }
+      .subtitle { margin: 0.65rem 0 0; color: var(--muted); font-size: 1.05rem; }
+      .badges { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.1rem; }
+      .badge {
+        padding: 0.65rem 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.03);
+        color: #dce7f7;
+        font-size: 0.92rem;
+      }
+      .section {
+        margin-top: 1.5rem;
+        padding: 1.35rem;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: var(--panel);
+      }
+      .section-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem; }
+      .dot {
+        width: 0.95rem;
+        height: 0.95rem;
+        border-radius: 50%;
+        background: var(--accent-strong);
+        box-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
+      }
+      .section-title { margin: 0; font-size: 1.45rem; font-weight: 800; }
+      .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.9rem; }
+      .stat-card, .ability-card { border: 1px solid var(--line); border-radius: 18px; background: var(--panel-soft); }
+      .stat-card { padding: 1rem; }
+      .stat-label { margin: 0; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.14em; }
+      .stat-value { margin: 0.55rem 0 0; font-size: 1.8rem; font-weight: 800; }
+      .stat-note { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.92rem; }
+      .ability-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+      .ability-card { padding: 1.1rem; }
+      .ability-kicker {
+        margin: 0;
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .ability-name { margin: 0.4rem 0 0; font-size: 1.35rem; font-weight: 800; }
+      .ability-description, .ability-usage { margin: 0.7rem 0 0; color: var(--muted); line-height: 1.5; }
+      .ability-usage strong { color: var(--text); }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 1rem;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+      .back-link:hover { color: var(--text); }
+
+      @media (max-width: 900px) {
+        .hero { grid-template-columns: 1fr; }
+        .portrait-card { max-width: 220px; }
+        .stats-grid, .ability-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      @media (max-width: 640px) {
+        main { width: calc(100vw - 1.5rem); }
+        .page-shell { padding-inline: 0.75rem; }
+        .hero, .section { padding: 1rem; }
+        .stats-grid, .ability-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell" style={`--accent: ${accent.accent}; --accent-strong: ${accent.accentStrong};`}>
+      <header>
+        <MainNav currentPath="/brawlers" />
+      </header>
+
+      <main>
+        <a class="back-link" href="/brawlers">← Back to brawlers</a>
+
+        <section class="hero">
+          <div class="portrait-card">
+            {portrait ? (
+              <img src={portrait} alt={`${meta.name} portrait`} />
+            ) : (
+              <span class="fallback-initial">{meta.name[0]}</span>
+            )}
+          </div>
+
+          <div class="hero-copy">
+            <p class="eyebrow">{meta.rarity}</p>
+            <h1>{meta.name}</h1>
+            <p class="subtitle">{detail.subtitle}</p>
+
+            <div class="badges">
+              <span class="badge">Class: {detail.className}</span>
+              <span class="badge">Offense: {detail.offense}</span>
+              <span class="badge">Defense: {detail.defense}</span>
+              <span class="badge">Utility: {detail.utility}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <span class="dot"></span>
+            <h2 class="section-title">Stats</h2>
+          </div>
+
+          <div class="stats-grid">
+            {detail.stats.map((stat) => (
+              <article class="stat-card">
+                <p class="stat-label">{stat.label}</p>
+                <p class="stat-value">{stat.value}</p>
+                <p class="stat-note">{stat.note}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <span class="dot"></span>
+            <h2 class="section-title">Star Powers</h2>
+          </div>
+
+          <div class="ability-grid">
+            {detail.starPowers.map((power) => (
+              <article class="ability-card">
+                <p class="ability-kicker">Star Power</p>
+                <h3 class="ability-name">{power.name}</h3>
+                <p class="ability-description">{power.description}</p>
+                <p class="ability-usage"><strong>Use case:</strong> {power.usage}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <span class="dot"></span>
+            <h2 class="section-title">Gadgets</h2>
+          </div>
+
+          <div class="ability-grid">
+            {detail.gadgets.map((gadget) => (
+              <article class="ability-card">
+                <p class="ability-kicker">Gadget</p>
+                <h3 class="ability-name">{gadget.name}</h3>
+                <p class="ability-description">{gadget.description}</p>
+                <p class="ability-usage"><strong>Use case:</strong> {gadget.usage}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
