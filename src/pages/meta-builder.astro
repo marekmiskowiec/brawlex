@@ -3,7 +3,7 @@ import MainNav from "../components/MainNav.astro";
 import { brawlerOrder, slugifyBrawler } from "../data/brawlers";
 
 const title = "Brawlex | Meta Builder";
-const brawlerAssetModules = import.meta.glob("../assets/brawlers/*.png", {
+const brawlerAssetModules = import.meta.glob("../assets/brawlers/*.avif", {
   eager: true,
   import: "default"
 });
@@ -12,17 +12,33 @@ type AssetModule = {
   src: string;
 };
 
+type TierEntry = {
+  label: string;
+  color: string;
+  brawlers: string[];
+};
+
 const orderedAssets = Object.entries(brawlerAssetModules)
   .sort(([left], [right]) => {
-    const leftId = Number(left.match(/(\d+)\.png$/)?.[1] ?? 0);
-    const rightId = Number(right.match(/(\d+)\.png$/)?.[1] ?? 0);
+    const leftId = Number(left.match(/(\d+)\.avif$/)?.[1] ?? 0);
+    const rightId = Number(right.match(/(\d+)\.avif$/)?.[1] ?? 0);
     return leftId - rightId;
   })
   .map(([, asset]) => (asset as AssetModule).src);
 
-const portraitByName = new Map(brawlerOrder.map((name, index) => [name, orderedAssets[index] ?? null]));
+const portraitByName = new Map(brawlerOrder.map((name, index) => [name, orderedAssets[index] ?? ""]));
+const portraitScaleByName: Record<string, number> = {
+  Finx: 0.82,
+  Kaze: 0.82,
+  Mina: 0.84,
+  Ziggy: 0.84,
+  Gigi: 0.84,
+  Glowbert: 0.84,
+  Sirius: 0.82,
+  Najia: 0.84
+};
 
-const tiers = [
+const tiers: TierEntry[] = [
   {
     label: "S",
     color: "#f87171",
@@ -139,6 +155,17 @@ const tiers = [
     ]
   }
 ];
+
+const initialBoard = tiers.map((tier) => ({
+  label: tier.label,
+  color: tier.color,
+  cards: tier.brawlers.map((name) => ({
+    name,
+    href: `/brawlers/${slugifyBrawler(name)}`,
+    portrait: portraitByName.get(name) ?? "",
+    scale: portraitScaleByName[name] ?? 1
+  }))
+}));
 ---
 
 <!doctype html>
@@ -150,11 +177,13 @@ const tiers = [
     <style>
       :root {
         color-scheme: dark;
-        --bg: #222839;
-        --panel: #2c3448;
-        --line: rgba(0, 0, 0, 0.22);
+        --bg: #171b25;
+        --panel: #23293a;
+        --line: rgba(0, 0, 0, 0.28);
         --text: #f2f5fb;
         --muted: #b8c0d0;
+        --hover: rgba(255, 255, 255, 0.06);
+        --drop: rgba(255, 255, 255, 0.14);
       }
 
       * { box-sizing: border-box; }
@@ -164,16 +193,22 @@ const tiers = [
         min-height: 100vh;
         font-family: "Trebuchet MS", "Segoe UI", sans-serif;
         color: var(--text);
-        background: linear-gradient(180deg, #1d2330, #222839);
+        background:
+          radial-gradient(circle at top, rgba(245, 158, 11, 0.06), transparent 24%),
+          linear-gradient(180deg, #171b25, #1d2330 55%, #171b25);
       }
 
       .page-shell { min-height: 100vh; padding: 1rem 1rem 2.5rem; }
       header { padding-top: 0.5rem; }
-      main { width: min(1220px, calc(100vw - 2rem)); margin: 1.25rem auto 0; }
+      main { width: min(1240px, calc(100vw - 2rem)); margin: 1.25rem auto 0; }
 
       .intro {
         margin-bottom: 1.25rem;
         padding: 1rem 1.2rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
         border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: 16px;
         background: rgba(255, 255, 255, 0.02);
@@ -187,6 +222,22 @@ const tiers = [
       .intro p {
         margin: 0.35rem 0 0;
         color: var(--muted);
+        max-width: 64ch;
+      }
+
+      .button {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        background: rgba(29, 35, 48, 0.96);
+        color: var(--text);
+        padding: 0.78rem 0.95rem;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .button:hover {
+        background: rgba(46, 55, 73, 0.98);
       }
 
       .board {
@@ -223,10 +274,29 @@ const tiers = [
         min-height: 98px;
       }
 
+      .tier-content.is-over {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
       .card {
         width: 62px;
         color: inherit;
         text-decoration: none;
+        cursor: grab;
+        border-radius: 8px;
+        transition: transform 140ms ease, opacity 140ms ease, background-color 140ms ease;
+      }
+
+      .card.is-dragging {
+        opacity: 0.35;
+      }
+
+      .card.is-hidden {
+        display: none;
+      }
+
+      .card.is-target {
+        background: var(--drop);
       }
 
       .card:hover .thumb {
@@ -236,6 +306,7 @@ const tiers = [
       .thumb {
         border: 3px solid #05070c;
         background: #0d1119;
+        overflow: hidden;
         transition: transform 140ms ease;
       }
 
@@ -244,6 +315,8 @@ const tiers = [
         display: block;
         aspect-ratio: 1 / 1;
         object-fit: cover;
+        transform: scale(var(--portrait-scale, 1));
+        transform-origin: center;
       }
 
       .name {
@@ -257,13 +330,28 @@ const tiers = [
         text-overflow: ellipsis;
       }
 
+      .card-placeholder {
+        width: 62px;
+        min-height: 82px;
+        border: 2px dashed rgba(255, 255, 255, 0.22);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
       @media (max-width: 720px) {
         .page-shell { padding-inline: 0.75rem; }
         main { width: calc(100vw - 1.5rem); }
+        .intro {
+          flex-direction: column;
+        }
+        .button {
+          width: 100%;
+        }
         .tier-row { grid-template-columns: 58px minmax(0, 1fr); }
         .tier-label { font-size: 1.5rem; }
         .tier-content { gap: 8px; padding: 10px; }
         .card { width: 56px; }
+        .card-placeholder { width: 56px; min-height: 74px; }
         .name { font-size: 0.68rem; }
       }
     </style>
@@ -276,29 +364,288 @@ const tiers = [
 
       <main>
         <section class="intro">
-          <h1>Meta Builder</h1>
-          <p>Static copy of the Meta Tracker board using the same default tier placements.</p>
+          <div>
+            <h1>Meta Builder</h1>
+            <p>Drag a brawler onto another brawler to reorder within a tier, or drag it into another tier to move it there. The leftmost card is the strongest brawler in that row.</p>
+          </div>
+
+          <button class="button" type="button" data-reset>Reset Board</button>
         </section>
 
-        <section class="board" aria-label="Brawler meta builder board">
-          {tiers.map((tier) => (
+        <section class="board" aria-label="Interactive brawler meta builder">
+          {initialBoard.map((tier) => (
             <div class="tier-row">
               <div class="tier-label" style={`background: ${tier.color};`}>{tier.label}</div>
-
-              <div class="tier-content">
-                {tier.brawlers.map((brawler) => (
-                  <a class="card" href={`/brawlers/${slugifyBrawler(brawler)}`}>
-                    <div class="thumb">
-                      <img src={portraitByName.get(brawler) ?? ""} alt={`${brawler} avatar`} loading="lazy" />
-                    </div>
-                    <div class="name">{brawler}</div>
-                  </a>
-                ))}
-              </div>
+              <div class="tier-content" data-tier={tier.label}></div>
             </div>
           ))}
         </section>
       </main>
     </div>
+
+    <script define:vars={{ initialBoard }}>
+      const storageKey = "brawlex-meta-builder-v3";
+      const knownCards = new Map(
+        initialBoard.flatMap((tier) => tier.cards.map((card) => [card.name, { ...card }]))
+      );
+      let activeCardName = null;
+      let activeCardElement = null;
+      let placeholder = null;
+
+      function cloneBoard() {
+        return initialBoard.map((tier) => ({
+          label: tier.label,
+          color: tier.color,
+          cards: tier.cards.map((card) => ({ ...card }))
+        }));
+      }
+
+      function sanitizeBoard(candidate) {
+        if (!Array.isArray(candidate) || candidate.length !== initialBoard.length) {
+          return cloneBoard();
+        }
+
+        const seen = new Set();
+
+        const next = initialBoard.map((tier, index) => {
+          const sourceCards = Array.isArray(candidate[index]?.cards) ? candidate[index].cards : [];
+          return {
+            label: tier.label,
+            color: tier.color,
+            cards: sourceCards
+              .map((card) => {
+                const name = typeof card === "string" ? card : card?.name;
+                if (!name || seen.has(name) || !knownCards.has(name)) {
+                  return null;
+                }
+                seen.add(name);
+                return { ...knownCards.get(name) };
+              })
+              .filter(Boolean)
+          };
+        });
+
+        for (const [name, card] of knownCards.entries()) {
+          if (!seen.has(name)) {
+            next[next.length - 1].cards.push({ ...card });
+          }
+        }
+
+        return next;
+      }
+
+      function loadBoard() {
+        try {
+          const raw = localStorage.getItem(storageKey);
+          return raw ? sanitizeBoard(JSON.parse(raw)) : cloneBoard();
+        } catch {
+          return cloneBoard();
+        }
+      }
+
+      let board = loadBoard();
+
+      function persistBoard() {
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify(
+            board.map((tier) => ({
+              label: tier.label,
+              cards: tier.cards.map((card) => card.name)
+            }))
+          )
+        );
+      }
+
+      function clearActiveStates() {
+        document.querySelectorAll(".card").forEach((card) => {
+          card.classList.remove("is-dragging", "is-target");
+        });
+        document.querySelectorAll(".tier-content").forEach((tier) => {
+          tier.classList.remove("is-over");
+        });
+      }
+
+      function removePlaceholder() {
+        if (placeholder?.parentElement) {
+          placeholder.parentElement.removeChild(placeholder);
+        }
+      }
+
+      function ensurePlaceholder() {
+        if (!placeholder) {
+          placeholder = document.createElement("div");
+          placeholder.className = "card-placeholder";
+        }
+        return placeholder;
+      }
+
+      function getPlaceholderIndex(row) {
+        return Array.from(row.children).indexOf(placeholder);
+      }
+
+      function placePlaceholderNextToCard(cardElement, placeAfter) {
+        const row = cardElement.parentElement;
+        if (!row) {
+          return;
+        }
+
+        const marker = ensurePlaceholder();
+        const sibling = placeAfter ? cardElement.nextSibling : cardElement;
+        if (sibling !== marker) {
+          row.insertBefore(marker, sibling);
+        }
+      }
+
+      function syncBoardFromDom() {
+        board = initialBoard.map((tier) => {
+          const row = document.querySelector(`[data-tier="${tier.label}"]`);
+          const cards = row
+            ? Array.from(row.querySelectorAll(":scope > .card"))
+                .map((card) => card.dataset.name)
+                .filter(Boolean)
+                .map((name) => ({ ...knownCards.get(name) }))
+            : tier.cards.map((card) => ({ ...card }));
+
+          return {
+            label: tier.label,
+            color: tier.color,
+            cards
+          };
+        });
+      }
+
+      function commitDrop(targetRow) {
+        if (!activeCardElement || !targetRow || !placeholder || placeholder.parentElement !== targetRow) {
+          return;
+        }
+
+        targetRow.insertBefore(activeCardElement, placeholder);
+        activeCardElement.classList.remove("is-hidden", "is-dragging", "is-target");
+        removePlaceholder();
+        syncBoardFromDom();
+        persistBoard();
+      }
+
+      function createCard(card) {
+        const link = document.createElement("a");
+        link.className = "card";
+        link.href = card.href;
+        link.draggable = true;
+        link.dataset.name = card.name;
+        link.style.setProperty("--portrait-scale", String(card.scale ?? 1));
+
+        link.addEventListener("dragstart", (event) => {
+          activeCardName = card.name;
+          activeCardElement = link;
+          link.parentElement?.insertBefore(ensurePlaceholder(), link);
+          link.classList.add("is-dragging");
+          window.setTimeout(() => {
+            link.classList.add("is-hidden");
+          }, 0);
+          if (event.dataTransfer) {
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("text/plain", card.name);
+          }
+        });
+
+        link.addEventListener("dragend", () => {
+          if (activeCardElement) {
+            activeCardElement.classList.remove("is-hidden", "is-dragging", "is-target");
+          }
+          removePlaceholder();
+          clearActiveStates();
+          activeCardName = null;
+          activeCardElement = null;
+        });
+
+        link.addEventListener("dragover", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const rect = link.getBoundingClientRect();
+          const placeAfter = event.clientX > rect.left + rect.width / 2;
+          placePlaceholderNextToCard(link, placeAfter);
+          if (card.name !== activeCardName) {
+            link.classList.add("is-target");
+          }
+          if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = "move";
+          }
+        });
+
+        link.addEventListener("dragleave", () => {
+          link.classList.remove("is-target");
+        });
+
+        link.addEventListener("drop", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          clearActiveStates();
+          commitDrop(link.parentElement);
+        });
+
+        const thumb = document.createElement("div");
+        thumb.className = "thumb";
+
+        const image = document.createElement("img");
+        image.src = card.portrait;
+        image.alt = `${card.name} avatar`;
+        image.loading = "lazy";
+
+        const label = document.createElement("div");
+        label.className = "name";
+        label.textContent = card.name;
+
+        thumb.append(image);
+        link.append(thumb, label);
+        return link;
+      }
+
+      function renderBoard() {
+        board.forEach((tier) => {
+          const row = document.querySelector(`[data-tier="${tier.label}"]`);
+          if (!row) {
+            return;
+          }
+
+          row.innerHTML = "";
+          row.ondragover = (event) => {
+            event.preventDefault();
+            row.classList.add("is-over");
+            if (event.target === row) {
+              row.append(ensurePlaceholder());
+            }
+            if (event.dataTransfer) {
+              event.dataTransfer.dropEffect = "move";
+            }
+          };
+
+          row.ondragleave = (event) => {
+            if (event.currentTarget === row) {
+              row.classList.remove("is-over");
+            }
+          };
+
+          row.ondrop = (event) => {
+            event.preventDefault();
+            row.classList.remove("is-over");
+            clearActiveStates();
+            commitDrop(row);
+          };
+
+          tier.cards.forEach((card) => {
+            row.append(createCard(card));
+          });
+        });
+      }
+
+      document.querySelector("[data-reset]")?.addEventListener("click", () => {
+        board = cloneBoard();
+        persistBoard();
+        renderBoard();
+      });
+
+      renderBoard();
+    </script>
   </body>
 </html>

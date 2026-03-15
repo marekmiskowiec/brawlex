@@ -4,7 +4,7 @@ import { brawlerOrder } from "../data/brawlers";
 import topPlayersData from "../data/top_players.json";
 
 const title = "Brawlex | Leaderboards";
-const brawlerAssetModules = import.meta.glob("../assets/brawlers/*.png", {
+const brawlerAssetModules = import.meta.glob("../assets/brawlers/*.avif", {
   eager: true,
   import: "default"
 });
@@ -15,8 +15,8 @@ type AssetModule = {
 
 const orderedAssets = Object.entries(brawlerAssetModules)
   .sort(([left], [right]) => {
-    const leftId = Number(left.match(/(\d+)\.png$/)?.[1] ?? 0);
-    const rightId = Number(right.match(/(\d+)\.png$/)?.[1] ?? 0);
+    const leftId = Number(left.match(/(\d+)\.avif$/)?.[1] ?? 0);
+    const rightId = Number(right.match(/(\d+)\.avif$/)?.[1] ?? 0);
     return leftId - rightId;
   })
   .map(([, asset]) => (asset as AssetModule).src);
