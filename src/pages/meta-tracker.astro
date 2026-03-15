@@ -1,0 +1,304 @@
+---
+import MainNav from "../components/MainNav.astro";
+import { brawlerOrder, slugifyBrawler } from "../data/brawlers";
+
+const title = "Brawlex | Meta Tracker";
+const brawlerAssetModules = import.meta.glob("../assets/brawlers/*.png", {
+  eager: true,
+  import: "default"
+});
+
+type AssetModule = {
+  src: string;
+};
+
+const orderedAssets = Object.entries(brawlerAssetModules)
+  .sort(([left], [right]) => {
+    const leftId = Number(left.match(/(\d+)\.png$/)?.[1] ?? 0);
+    const rightId = Number(right.match(/(\d+)\.png$/)?.[1] ?? 0);
+    return leftId - rightId;
+  })
+  .map(([, asset]) => (asset as AssetModule).src);
+
+const portraitByName = new Map(brawlerOrder.map((name, index) => [name, orderedAssets[index] ?? null]));
+
+const tiers = [
+  {
+    label: "S",
+    color: "#f87171",
+    brawlers: ["Bibi", "Sirius", "Rico", "Crow", "Mortis", "Spike", "Bull", "Leon"]
+  },
+  {
+    label: "A",
+    color: "#f4a261",
+    brawlers: ["Bea", "Colt", "Mandy", "Maisie", "Mina", "Pierce", "Emz", "Angelo", "Byron", "Fang"]
+  },
+  {
+    label: "B",
+    color: "#ead06b",
+    brawlers: [
+      "Piper",
+      "Moe",
+      "Tara",
+      "Max",
+      "Amber",
+      "Belle",
+      "Buster",
+      "Otis",
+      "Bo",
+      "Carl",
+      "Lumi",
+      "Sandy",
+      "Janet",
+      "Gene",
+      "Cordelius",
+      "Ollie",
+      "Gigi",
+      "Eve",
+      "Brock",
+      "Charlie"
+    ]
+  },
+  {
+    label: "C",
+    color: "#a8d463",
+    brawlers: [
+      "Berry",
+      "Kaze",
+      "Kenji",
+      "Lou",
+      "Glowbert",
+      "Stu",
+      "Trunk",
+      "Bonnie",
+      "Mico",
+      "Jessie",
+      "Nita",
+      "Lola",
+      "Nani",
+      "Gray",
+      "Alli",
+      "Pearl",
+      "Ziggy",
+      "Meeple",
+      "Rosa",
+      "Kit",
+      "Melodie",
+      "Tick"
+    ]
+  },
+  {
+    label: "D",
+    color: "#72d572",
+    brawlers: [
+      "Gus",
+      "Draco",
+      "Barley",
+      "Finx",
+      "Edgar",
+      "Juju",
+      "Penny",
+      "Shade",
+      "Gale",
+      "Darryl",
+      "Griff",
+      "Pam",
+      "Frank",
+      "Willow",
+      "Dynamike"
+    ]
+  },
+  {
+    label: "F",
+    color: "#6ed2b0",
+    brawlers: [
+      "Squeak",
+      "Sprout",
+      "Grom",
+      "Poco",
+      "Surge",
+      "Lily",
+      "Chuck",
+      "Ruffs",
+      "El Primo",
+      "Buzz",
+      "Sam",
+      "Shelly",
+      "Colette",
+      "Ash",
+      "Clancy",
+      "Meg",
+      "R-T",
+      "Hank",
+      "Larry & Lawrie",
+      "Doug",
+      "Jae-Yong",
+      "Jacky",
+      "Mr. P",
+      "8-Bit"
+    ]
+  }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #222839;
+        --panel: #2c3448;
+        --line: rgba(0, 0, 0, 0.22);
+        --text: #f2f5fb;
+        --muted: #b8c0d0;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        color: var(--text);
+        background: linear-gradient(180deg, #1d2330, #222839);
+      }
+
+      .page-shell { min-height: 100vh; padding: 1rem 1rem 2.5rem; }
+      header { padding-top: 0.5rem; }
+      main { width: min(1220px, calc(100vw - 2rem)); margin: 1.25rem auto 0; }
+
+      .intro {
+        margin-bottom: 1.25rem;
+        padding: 1rem 1.2rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .intro h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+      }
+
+      .intro p {
+        margin: 0.35rem 0 0;
+        color: var(--muted);
+      }
+
+      .board {
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        border-radius: 18px;
+        background: var(--panel);
+        box-shadow: 0 26px 70px rgba(0, 0, 0, 0.25);
+      }
+
+      .tier-row {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        border-top: 1px solid var(--line);
+      }
+
+      .tier-row:first-child {
+        border-top: 0;
+      }
+
+      .tier-label {
+        display: grid;
+        place-items: center;
+        font-size: 2rem;
+        font-weight: 900;
+        color: #1f2433;
+      }
+
+      .tier-content {
+        padding: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        min-height: 98px;
+      }
+
+      .card {
+        width: 62px;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .card:hover .thumb {
+        transform: translateY(-2px);
+      }
+
+      .thumb {
+        border: 3px solid #05070c;
+        background: #0d1119;
+        transition: transform 140ms ease;
+      }
+
+      .thumb img {
+        width: 100%;
+        display: block;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+      }
+
+      .name {
+        margin-top: 4px;
+        color: #f4f7ff;
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      @media (max-width: 720px) {
+        .page-shell { padding-inline: 0.75rem; }
+        main { width: calc(100vw - 1.5rem); }
+        .tier-row { grid-template-columns: 58px minmax(0, 1fr); }
+        .tier-label { font-size: 1.5rem; }
+        .tier-content { gap: 8px; padding: 10px; }
+        .card { width: 56px; }
+        .name { font-size: 0.68rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header>
+        <MainNav currentPath="/meta-tracker" />
+      </header>
+
+      <main>
+        <section class="intro">
+          <h1>Meta Tracker</h1>
+          <p>Tier board styled after your reference, with each portrait linking to its brawler page.</p>
+        </section>
+
+        <section class="board" aria-label="Brawler meta tier list">
+          {tiers.map((tier) => (
+            <div class="tier-row">
+              <div class="tier-label" style={`background: ${tier.color};`}>{tier.label}</div>
+
+              <div class="tier-content">
+                {tier.brawlers.map((brawler) => (
+                  <a class="card" href={`/brawlers/${slugifyBrawler(brawler)}`}>
+                    <div class="thumb">
+                      <img src={portraitByName.get(brawler) ?? ""} alt={`${brawler} avatar`} loading="lazy" />
+                    </div>
+                    <div class="name">{brawler}</div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

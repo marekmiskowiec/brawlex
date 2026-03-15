@@ -1,3 +1,5 @@
+import brawlersData from "./brawlers.json";
+
 export type BrawlerStat = {
   label: string;
   value: string;
@@ -27,21 +29,73 @@ export type BrawlerGroup = {
   brawlers: string[];
 };
 
-export const brawlerGroups: BrawlerGroup[] = [
-  { rarity: "Starting Brawler", brawlers: ["Shelly"], tone: "starting" },
-  {
-    rarity: "Rare",
-    brawlers: ["Colt", "Bull", "Brock", "Barley", "Nita", "El Primo", "Poco", "Rosa"],
-    tone: "rare"
-  },
+type ApiAbility = {
+  id: number;
+  name: string;
+};
+
+type ApiGear = {
+  id: number;
+  name: string;
+  level: number;
+};
+
+type ApiBrawler = {
+  id: number;
+  name: string;
+  starPowers: ApiAbility[];
+  hyperCharges?: ApiAbility[];
+  gears?: ApiGear[];
+  gadgets: ApiAbility[];
+};
+
+const apiItems = (brawlersData.items as ApiBrawler[]).map((item) => ({
+  ...item,
+  displayName: normalizeApiName(item.name)
+}));
+
+const apiMap = new Map(apiItems.map((item) => [item.displayName, item]));
+
+function titleCase(text: string) {
+  return text
+    .toLowerCase()
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0].toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function normalizeApiName(name: string) {
+  const upper = name.toUpperCase();
+
+  const specialNames: Record<string, string> = {
+    "8-BIT": "8-Bit",
+    "MR. P": "Mr. P",
+    "R-T": "R-T",
+    "EL PRIMO": "El Primo",
+    "LARRY & LAWRIE": "Larry & Lawrie",
+    "JAE-YONG": "Jae-Yong"
+  };
+
+  return specialNames[upper] ?? titleCase(upper);
+}
+
+function normalizeAbilityName(name: string) {
+  return titleCase(name).replace(/\bNo\b/g, "No.").replace(/\bId\b/g, "ID");
+}
+
+const groupDefinitions = [
+  { rarity: "Starting Brawler", tone: "starting", names: ["Shelly"] },
+  { rarity: "Rare", tone: "rare", names: ["Colt", "Bull", "Brock", "Barley", "Nita", "El Primo", "Poco", "Rosa"] },
   {
     rarity: "Super Rare",
-    brawlers: ["Rico", "Jessie", "Dynamike", "Darryl", "Penny", "Tick", "Carl", "8-Bit", "Jacky", "Gus"],
-    tone: "super-rare"
+    tone: "super-rare",
+    names: ["Rico", "Jessie", "Dynamike", "Darryl", "Penny", "Tick", "Carl", "8-Bit", "Jacky", "Gus"]
   },
   {
     rarity: "Epic",
-    brawlers: [
+    tone: "epic",
+    names: [
       "Bo",
       "Piper",
       "Pam",
@@ -71,12 +125,12 @@ export const brawlerGroups: BrawlerGroup[] = [
       "Shade",
       "Meeple",
       "Trunk"
-    ],
-    tone: "epic"
+    ]
   },
   {
     rarity: "Mythic",
-    brawlers: [
+    tone: "mythic",
+    names: [
       "Mortis",
       "Tara",
       "Gene",
@@ -115,73 +169,57 @@ export const brawlerGroups: BrawlerGroup[] = [
       "Gigi",
       "Glowbert",
       "Najia"
-    ],
-    tone: "mythic"
+    ]
   },
   {
     rarity: "Legendary",
-    brawlers: [
-      "Spike",
-      "Crow",
-      "Leon",
-      "Sandy",
-      "Surge",
-      "Amber",
-      "Meg",
-      "Chester",
-      "Cordelius",
-      "Kit",
-      "Draco",
-      "Kenji",
-      "Pierce"
-    ],
-    tone: "legendary"
+    tone: "legendary",
+    names: ["Spike", "Crow", "Leon", "Sandy", "Surge", "Amber", "Meg", "Chester", "Cordelius", "Kit", "Draco", "Kenji", "Pierce"]
   },
-  { rarity: "Ultra Legendary", brawlers: ["Kaze", "Sirius"], tone: "ultra" }
+  { rarity: "Ultra Legendary", tone: "ultra", names: ["Kaze", "Sirius"] }
 ];
 
-export const brawlerOrder = brawlerGroups.flatMap((group) => group.brawlers);
+export const brawlerGroups: BrawlerGroup[] = groupDefinitions.map((group) => ({
+  rarity: group.rarity,
+  tone: group.tone,
+  brawlers: group.names.filter((name) => apiMap.has(name))
+}));
 
-export const brawlerDetails: Record<string, BrawlerDetail> = {
-  Shelly: {
-    className: "Damage Dealer",
-    offense: 4,
-    defense: 3,
-    utility: 2,
-    subtitle:
-      "Damage Dealer with strong close-range burst, solid lane control, and straightforward utility options.",
+export const brawlerOrder = apiItems.map((item) => item.displayName);
+
+function buildDetail(item: ApiBrawler): BrawlerDetail {
+  const starPowers = item.starPowers.map((power, index) => ({
+    name: normalizeAbilityName(power.name),
+    description: `Official API entry for ${normalizeApiName(item.name)} star power ${index + 1}.`,
+    usage: `Linked from daily data refresh. Ability id: ${power.id}.`
+  }));
+
+  const gadgets = item.gadgets.map((gadget, index) => ({
+    name: normalizeAbilityName(gadget.name),
+    description: `Official API entry for ${normalizeApiName(item.name)} gadget ${index + 1}.`,
+    usage: `Linked from daily data refresh. Ability id: ${gadget.id}.`
+  }));
+
+  return {
+    className: "API Synced",
+    offense: Math.min(5, Math.max(1, item.starPowers.length + item.gadgets.length - 1)),
+    defense: Math.min(5, Math.max(1, Math.ceil((item.gears?.length ?? 0) / 2))),
+    utility: Math.min(5, Math.max(1, (item.hyperCharges?.length ?? 0) + 2)),
+    subtitle: `${normalizeApiName(item.name)} is synced from brawlers.json with ${item.starPowers.length} star powers, ${item.gadgets.length} gadgets, ${item.gears?.length ?? 0} gears, and ${item.hyperCharges?.length ?? 0} hypercharges.`,
     stats: [
-      { label: "Health", value: "7,800", note: "+390 per level" },
-      { label: "Speed", value: "770", note: "Normal movement speed" },
-      { label: "Damage", value: "600", note: "+30 per level" },
-      { label: "Reload", value: "1.5s", note: "Fast burst cycle" }
+      { label: "Brawler ID", value: String(item.id), note: "Official API id" },
+      { label: "Star Powers", value: String(item.starPowers.length), note: "Available upgrades" },
+      { label: "Gadgets", value: String(item.gadgets.length), note: "Available gadgets" },
+      { label: "Gears", value: String(item.gears?.length ?? 0), note: `${item.hyperCharges?.length ?? 0} hypercharges` }
     ],
-    starPowers: [
-      {
-        name: "Shell Shock",
-        description: "Shelly's Super shells slow down enemies for 2 seconds.",
-        usage: "Popular control option for pinning targets in place after a close-range Super."
-      },
-      {
-        name: "Band-Aid",
-        description: "When Shelly drops below 40% health, she instantly heals for 30 health after charging.",
-        usage: "Defensive option that gives extra survivability in aggressive lane fights."
-      }
-    ],
-    gadgets: [
-      {
-        name: "Fast Forward",
-        description: "Shelly dashes in the aimed direction and fully reloads her ammo.",
-        usage: "Best for gap-closing, escaping pressure, or immediately chaining more shots."
-      },
-      {
-        name: "Clay Pigeons",
-        description: "Shelly narrows her attack spread and extends its effective range for one activation.",
-        usage: "Useful when you need poke value before committing into short-range fights."
-      }
-    ]
-  }
-};
+    starPowers,
+    gadgets
+  };
+}
+
+export const brawlerDetails: Record<string, BrawlerDetail> = Object.fromEntries(
+  apiItems.map((item) => [item.displayName, buildDetail(item)])
+);
 
 export function slugifyBrawler(name: string) {
   return name
@@ -203,6 +241,16 @@ export function getBrawlerMeta(name: string) {
         detail: brawlerDetails[name] ?? null
       };
     }
+  }
+
+  if (brawlerDetails[name]) {
+    return {
+      name,
+      rarity: "Brawler",
+      tone: "starting",
+      slug: slugifyBrawler(name),
+      detail: brawlerDetails[name]
+    };
   }
 
   return null;
