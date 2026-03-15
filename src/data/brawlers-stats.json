@@ -1,0 +1,702 @@
+[
+  {
+    "name": "8-Bit",
+    "hp": 5200,
+    "damage": "6 x 320",
+    "speed": "Very Slow",
+    "range": "Very Long (30)"
+  },
+  {
+    "name": "Alli",
+    "hp": 3900,
+    "damage": "1300",
+    "speed": "Fast",
+    "range": "Short (10)"
+  },
+  {
+    "name": "Amber",
+    "hp": 3400,
+    "damage": "2100",
+    "speed": "Normal",
+    "range": "Long (25)"
+  },
+  {
+    "name": "Angelo",
+    "hp": 3100,
+    "damage": "2000",
+    "speed": "Very Fast",
+    "range": "Very Long (30)"
+  },
+  {
+    "name": "Ash",
+    "hp": 5900,
+    "damage": "800",
+    "speed": "Normal",
+    "range": "Normal (14)"
+  },
+  {
+    "name": "Barley",
+    "hp": 2700,
+    "damage": "800",
+    "speed": "Normal",
+    "range": "Long (22)"
+  },
+  {
+    "name": "Bea",
+    "hp": 2800,
+    "damage": "800",
+    "speed": "Normal",
+    "range": "Very Long (30)"
+  },
+  {
+    "name": "Belle",
+    "hp": 2900,
+    "damage": "1040",
+    "speed": "Normal",
+    "range": "Very Long (30)"
+  },
+  {
+    "name": "Berry",
+    "hp": 2600,
+    "damage": "660",
+    "speed": "Normal",
+    "range": "Normal (6)"
+  },
+  {
+    "name": "Bibi",
+    "hp": 5000,
+    "damage": "1400",
+    "speed": "Very Fast",
+    "range": "Short (11)"
+  },
+  {
+    "name": "Bo",
+    "hp": 3800,
+    "damage": "3 x 640",
+    "speed": "Normal",
+    "range": "Long (26)"
+  },
+  {
+    "name": "Bonnie",
+    "hp": 5000,
+    "damage": "1120",
+    "speed": "Slow",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Brock",
+    "hp": 3000,
+    "damage": "1160",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Bull",
+    "hp": 5300,
+    "damage": "5 x 440",
+    "speed": "Fast",
+    "range": "Normal (16)"
+  },
+  {
+    "name": "Buster",
+    "hp": 5000,
+    "damage": "1380",
+    "speed": "Fast",
+    "range": "Normal (16)"
+  },
+  {
+    "name": "Buzz",
+    "hp": 5000,
+    "damage": "5 x 420",
+    "speed": "Fast",
+    "range": "Short (8)"
+  },
+  {
+    "name": "Byron",
+    "hp": 2600,
+    "damage": "380",
+    "speed": "Normal",
+    "range": "Very Long (30)"
+  },
+  {
+    "name": "Carl",
+    "hp": 4200,
+    "damage": "740",
+    "speed": "Normal",
+    "range": "Long (25)"
+  },
+  {
+    "name": "Charlie",
+    "hp": 3700,
+    "damage": "800",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Chester",
+    "hp": 3800,
+    "damage": "3 x 670",
+    "speed": "Fast",
+    "range": "Long (25)"
+  },
+  {
+    "name": "Chuck",
+    "hp": 4700,
+    "damage": "3 x 540",
+    "speed": "Fast",
+    "range": "Normal (20)"
+  },
+  {
+    "name": "Clancy",
+    "hp": 3500,
+    "damage": "700",
+    "speed": "Normal",
+    "range": "Long (22)"
+  },
+  {
+    "name": "Colette",
+    "hp": 3600,
+    "damage": "1100",
+    "speed": "Normal",
+    "range": "Long (26)"
+  },
+  {
+    "name": "Colt",
+    "hp": 3100,
+    "damage": "6 x 360",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Cordelius",
+    "hp": 3500,
+    "damage": "2 x 800",
+    "speed": "Very Fast",
+    "range": "Normal (16)"
+  },
+  {
+    "name": "Crow",
+    "hp": 3000,
+    "damage": "3 x 320",
+    "speed": "Very Fast",
+    "range": "Long (26)"
+  },
+  {
+    "name": "Darryl",
+    "hp": 5500,
+    "damage": "10 x 240",
+    "speed": "Fast",
+    "range": "Normal (18)"
+  },
+  {
+    "name": "Doug",
+    "hp": 5200,
+    "damage": "1200",
+    "speed": "Fast",
+    "range": "Short (10)"
+  },
+  {
+    "name": "Draco",
+    "hp": 5600,
+    "damage": "600",
+    "speed": "Normal",
+    "range": "Normal (12)"
+  },
+  {
+    "name": "Dynamike",
+    "hp": 3000,
+    "damage": "2 x 800",
+    "speed": "Fast",
+    "range": "Long (22)"
+  },
+  {
+    "name": "Edgar",
+    "hp": 3600,
+    "damage": "2 x 540",
+    "speed": "Very Fast",
+    "range": "Short (6)"
+  },
+  {
+    "name": "El Primo",
+    "hp": 6500,
+    "damage": "4 x 380",
+    "speed": "Fast",
+    "range": "Short (9)"
+  },
+  {
+    "name": "Emz",
+    "hp": 3900,
+    "damage": "560",
+    "speed": "Normal",
+    "range": "Normal (20)"
+  },
+  {
+    "name": "Eve",
+    "hp": 3100,
+    "damage": "640",
+    "speed": "Normal",
+    "range": "Very Long (28)"
+  },
+  {
+    "name": "Fang",
+    "hp": 4500,
+    "damage": "1360",
+    "speed": "Fast",
+    "range": "Very Long (8)"
+  },
+  {
+    "name": "Finx",
+    "hp": 3700,
+    "damage": "900",
+    "speed": "Normal",
+    "range": "Long (900)"
+  },
+  {
+    "name": "Frank",
+    "hp": 6800,
+    "damage": "1160",
+    "speed": "Fast",
+    "range": "Normal (18)"
+  },
+  {
+    "name": "Gale",
+    "hp": 4000,
+    "damage": "6 x 280",
+    "speed": "Normal",
+    "range": "Long (25)"
+  },
+  {
+    "name": "Gene",
+    "hp": 3800,
+    "damage": "1000",
+    "speed": "Normal",
+    "range": "Very Long (17)"
+  },
+  {
+    "name": "Gigi",
+    "hp": 4100,
+    "damage": "500",
+    "speed": "Very Fast",
+    "range": "Short (5)"
+  },
+  {
+    "name": "Glowy",
+    "hp": 3400,
+    "damage": "550",
+    "speed": "Fast",
+    "range": "Long (25)"
+  },
+  {
+    "name": "Gray",
+    "hp": 3400,
+    "damage": "1160",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Griff",
+    "hp": 3600,
+    "damage": "9 x 280",
+    "speed": "Normal",
+    "range": "Long (25)"
+  },
+  {
+    "name": "Grom",
+    "hp": 3000,
+    "damage": "1140",
+    "speed": "Normal",
+    "range": "Long (23)"
+  },
+  {
+    "name": "Gus",
+    "hp": 3300,
+    "damage": "1080",
+    "speed": "Normal",
+    "range": "Very Long (28)"
+  },
+  {
+    "name": "Hank",
+    "hp": 5200,
+    "damage": "2100",
+    "speed": "Normal",
+    "range": "Short (10)"
+  },
+  {
+    "name": "Jacky",
+    "hp": 5000,
+    "damage": "1240",
+    "speed": "Fast",
+    "range": "Short (10)"
+  },
+  {
+    "name": "Jae-yong",
+    "hp": 3700,
+    "damage": "850",
+    "speed": "Fast",
+    "range": "Long (900)"
+  },
+  {
+    "name": "Janet",
+    "hp": 3400,
+    "damage": "1000",
+    "speed": "Normal",
+    "range": "Normal (12)"
+  },
+  {
+    "name": "Jessie",
+    "hp": 3300,
+    "damage": "1060",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Juju",
+    "hp": 3100,
+    "damage": "1000",
+    "speed": "Very Fast",
+    "range": "Normal (6.33)"
+  },
+  {
+    "name": "Kaze",
+    "hp": 4100,
+    "damage": "750",
+    "speed": "Very Fast",
+    "range": "Short (9)"
+  },
+  {
+    "name": "Kenji",
+    "hp": 4000,
+    "damage": "750",
+    "speed": "Very Fast",
+    "range": "Short (9)"
+  },
+  {
+    "name": "Kit",
+    "hp": 3100,
+    "damage": "1000",
+    "speed": "Very Fast",
+    "range": "Short (11)"
+  },
+  {
+    "name": "Larry & Lawrie",
+    "hp": 3000,
+    "damage": "700",
+    "speed": "Fast",
+    "range": "Long (22)"
+  },
+  {
+    "name": "Leon",
+    "hp": 3600,
+    "damage": "4 x 480",
+    "speed": "Very Fast",
+    "range": "Very Long (29)"
+  },
+  {
+    "name": "Lily",
+    "hp": 4200,
+    "damage": "1060",
+    "speed": "Very Fast",
+    "range": "Short (6)"
+  },
+  {
+    "name": "Lola",
+    "hp": 4000,
+    "damage": "6 x 280",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Lou",
+    "hp": 3500,
+    "damage": "3 x 440",
+    "speed": "Normal",
+    "range": "Very Long (28)"
+  },
+  {
+    "name": "Lumi",
+    "hp": 3100,
+    "damage": "900",
+    "speed": "Normal",
+    "range": "Long (900)"
+  },
+  {
+    "name": "Maisie",
+    "hp": 4000,
+    "damage": "1500",
+    "speed": "Normal",
+    "range": "Long (26)"
+  },
+  {
+    "name": "Mandy",
+    "hp": 3000,
+    "damage": "1300",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Max",
+    "hp": 3500,
+    "damage": "4 x 320",
+    "speed": "Very Fast",
+    "range": "Long (25)"
+  },
+  {
+    "name": "Meeple",
+    "hp": 3300,
+    "damage": "1260",
+    "speed": "Normal",
+    "range": "Long (1160)"
+  },
+  {
+    "name": "Meg",
+    "hp": 3700,
+    "damage": "2 x 300",
+    "speed": "Fast",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Melodie",
+    "hp": 3800,
+    "damage": "3 x 920",
+    "speed": "Normal",
+    "range": "Long (24)"
+  },
+  {
+    "name": "Mico",
+    "hp": 3500,
+    "damage": "1140",
+    "speed": "Very Fast",
+    "range": "Normal (12)"
+  },
+  {
+    "name": "Mina",
+    "hp": 3600,
+    "damage": "800",
+    "speed": "Fast",
+    "range": "Long (15)"
+  },
+  {
+    "name": "Moe",
+    "hp": 3600,
+    "damage": "500",
+    "speed": "Fast",
+    "range": "Long (22)"
+  },
+  {
+    "name": "Mortis",
+    "hp": 4000,
+    "damage": "1000",
+    "speed": "Very Fast",
+    "range": "Short (8)"
+  },
+  {
+    "name": "Mr. P",
+    "hp": 3700,
+    "damage": "760",
+    "speed": "Normal",
+    "range": "Long (21)"
+  },
+  {
+    "name": "Nani",
+    "hp": 2500,
+    "damage": "3 x 740",
+    "speed": "Normal",
+    "range": "Long (26)"
+  },
+  {
+    "name": "Nita",
+    "hp": 4200,
+    "damage": "960",
+    "speed": "Normal",
+    "range": "Normal (18)"
+  },
+  {
+    "name": "Ollie",
+    "hp": 5400,
+    "damage": "1000",
+    "speed": "Fast",
+    "range": "Normal (900)"
+  },
+  {
+    "name": "Otis",
+    "hp": 3600,
+    "damage": "3 x 460",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Pam",
+    "hp": 5000,
+    "damage": "9 x 260",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Pearl",
+    "hp": 4300,
+    "damage": "6 x 280",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Penny",
+    "hp": 3500,
+    "damage": "980",
+    "speed": "Normal",
+    "range": "Long (24)"
+  },
+  {
+    "name": "Pierce",
+    "hp": 3000,
+    "damage": "950",
+    "speed": "Normal",
+    "range": "Very Long (33)"
+  },
+  {
+    "name": "Piper",
+    "hp": 2500,
+    "damage": "1700",
+    "speed": "Normal",
+    "range": "Very Long (30)"
+  },
+  {
+    "name": "Poco",
+    "hp": 4000,
+    "damage": "760",
+    "speed": "Normal",
+    "range": "Long (21)"
+  },
+  {
+    "name": "R-T",
+    "hp": 4100,
+    "damage": "700",
+    "speed": "Very Fast",
+    "range": "Very Long (30)"
+  },
+  {
+    "name": "Rico",
+    "hp": 3000,
+    "damage": "5 x 320",
+    "speed": "Normal",
+    "range": "Very Long (29)"
+  },
+  {
+    "name": "Rosa",
+    "hp": 5400,
+    "damage": "3 x 460",
+    "speed": "Fast",
+    "range": "Short (11)"
+  },
+  {
+    "name": "Ruffs",
+    "hp": 3000,
+    "damage": "2 x 600",
+    "speed": "Normal",
+    "range": "Long (27)"
+  },
+  {
+    "name": "Sam",
+    "hp": 5700,
+    "damage": "2 x 800",
+    "speed": "Fast",
+    "range": "()"
+  },
+  {
+    "name": "Sandy",
+    "hp": 4100,
+    "damage": "900",
+    "speed": "Fast",
+    "range": "Normal (18)"
+  },
+  {
+    "name": "Shade",
+    "hp": 3700,
+    "damage": "800",
+    "speed": "Very Fast",
+    "range": "Very Short (3.67)"
+  },
+  {
+    "name": "Shelly",
+    "hp": 3900,
+    "damage": "5 x 300",
+    "speed": "Fast",
+    "range": "Long (23)"
+  },
+  {
+    "name": "Sirius",
+    "hp": 3700,
+    "damage": "2 x 600",
+    "speed": "Fast",
+    "range": "Long (25)"
+  },
+  {
+    "name": "Spike",
+    "hp": 3000,
+    "damage": "540",
+    "speed": "Normal",
+    "range": "Long (23)"
+  },
+  {
+    "name": "Sprout",
+    "hp": 3200,
+    "damage": "1040",
+    "speed": "Normal",
+    "range": "Normal (15)"
+  },
+  {
+    "name": "Squeak",
+    "hp": 3800,
+    "damage": "1080",
+    "speed": "Normal",
+    "range": "Long (23)"
+  },
+  {
+    "name": "Stu",
+    "hp": 3500,
+    "damage": "2 x 540",
+    "speed": "Normal",
+    "range": "Long (23)"
+  },
+  {
+    "name": "Surge",
+    "hp": 3300,
+    "damage": "1180",
+    "speed": "Slow",
+    "range": "Normal (20)"
+  },
+  {
+    "name": "Tara",
+    "hp": 3300,
+    "damage": "3 x 480",
+    "speed": "Normal",
+    "range": "Long (24)"
+  },
+  {
+    "name": "Tick",
+    "hp": 2400,
+    "damage": "3 x 680",
+    "speed": "Normal",
+    "range": "Long (26)"
+  },
+  {
+    "name": "Trunk",
+    "hp": 5200,
+    "damage": "1400",
+    "speed": "Fast",
+    "range": "Short (10)"
+  },
+  {
+    "name": "Willow",
+    "hp": 3300,
+    "damage": "1200",
+    "speed": "Normal",
+    "range": "Long (22)"
+  },
+  {
+    "name": "Ziggy",
+    "hp": 3200,
+    "damage": "950",
+    "speed": "Fast",
+    "range": "Long (15)"
+  }
+]
