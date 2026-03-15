@@ -240,6 +240,11 @@ const initialBoard = tiers.map((tier) => ({
         background: rgba(46, 55, 73, 0.98);
       }
 
+      .button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+
       .board {
         overflow: hidden;
         border: 1px solid rgba(0, 0, 0, 0.3);
@@ -369,7 +374,10 @@ const initialBoard = tiers.map((tier) => ({
             <p>Drag a brawler onto another brawler to reorder within a tier, or drag it into another tier to move it there. The leftmost card is the strongest brawler in that row.</p>
           </div>
 
-          <button class="button" type="button" data-reset>Reset Board</button>
+          <div style="display:flex; gap:0.65rem; flex-wrap:wrap;">
+            <button class="button" type="button" data-save-image>Save Image</button>
+            <button class="button" type="button" data-reset>Reset Board</button>
+          </div>
         </section>
 
         <section class="board" aria-label="Interactive brawler meta builder">
@@ -388,6 +396,8 @@ const initialBoard = tiers.map((tier) => ({
       const knownCards = new Map(
         initialBoard.flatMap((tier) => tier.cards.map((card) => [card.name, { ...card }]))
       );
+      const boardElement = document.querySelector(".board");
+      const saveImageButton = document.querySelector("[data-save-image]");
       let activeCardName = null;
       let activeCardElement = null;
       let placeholder = null;
@@ -643,6 +653,33 @@ const initialBoard = tiers.map((tier) => ({
         board = cloneBoard();
         persistBoard();
         renderBoard();
+      });
+
+      saveImageButton?.addEventListener("click", async () => {
+        if (!boardElement) {
+          return;
+        }
+
+        saveImageButton.disabled = true;
+        const originalText = saveImageButton.textContent;
+        saveImageButton.textContent = "Saving...";
+
+        try {
+          const { default: html2canvas } = await import("https://esm.sh/html2canvas@1.4.1");
+          const canvas = await html2canvas(boardElement, {
+            backgroundColor: "#23293a",
+            useCORS: true,
+            scale: Math.min(window.devicePixelRatio || 1, 2)
+          });
+
+          const link = document.createElement("a");
+          link.href = canvas.toDataURL("image/png");
+          link.download = "brawlex-meta-tier-list.png";
+          link.click();
+        } finally {
+          saveImageButton.disabled = false;
+          saveImageButton.textContent = originalText;
+        }
       });
 
       renderBoard();
